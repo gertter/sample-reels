@@ -1,0 +1,100 @@
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+import pygame
+import sys
+class yinyue(QThread):
+    def __int__(self):
+        pass
+    def run(self):
+        pygame.mixer.init()
+        track = pygame.mixer.music.load("d.mp3")
+        pygame.mixer.music.play()
+yin=yinyue()
+
+
+class ShapeWidget(QWidget):  
+	def __init__(self,parent=None):  
+		super(ShapeWidget,self).__init__(parent)
+		self.i = 1
+		self.mypix()
+
+		self.setWindowFlags( Qt.Dialog| Qt.CustomizeWindowHint)
+		self.setGeometry(400,200,100,100)
+		self.timer = QTimer()
+		self.timer.setInterval(2500)  # 500毫秒
+		self.timer.timeout.connect(self.timeChange)   
+		self.timer.start()
+		self.gequ()
+	def mypix(self):
+		self.update()
+		if self.i == 21:
+			self.i = 1
+		self.mypic = {1: 'images1/15.png',2: 'images1/15.png',3: 'images1/16.png',4: 'images1/b.png',5: 'images1/10.png',6:'images1/11.png',7:'images1/12.png',8:'images1/13.png',9:'images1/1.jpg',10:'images1/2.jpg',11:'images1/3.jpg',12:'images1/4.jpg',13:'images1/5.jpg',14:'images1/6.jpg',15:'images1/7.jpg',16:'images1/8.jpg',17:'images1/9.jpg',18:'images1/14.png',19:'images1/17.png',20:'images1/a.jpg'}
+		self.pix = QPixmap(self.mypic[self.i], "0", Qt.AvoidDither | Qt.ThresholdDither | Qt.ThresholdAlphaDither)   
+		self.resize(self.pix.size())
+		self.setMask(self.pix.mask())  
+		self.dragPosition = None
+
+	def mousePressEvent(self, event):
+		if event.button() == Qt.LeftButton:
+			self.m_drag=True
+			self.m_DragPosition=event.globalPos()-self.pos()
+			event.accept()
+			self.setCursor(QCursor(Qt.OpenHandCursor))
+
+	def mouseMoveEvent(self, QMouseEvent):
+		if Qt.LeftButton and self.m_drag:
+			self.move(QMouseEvent.globalPos()- self.m_DragPosition )
+			QMouseEvent.accept()
+	
+	def mouseReleaseEvent(self, QMouseEvent):
+		self.m_drag=False
+		self.setCursor(QCursor(Qt.ArrowCursor))
+        
+	def paintEvent(self, event):
+		painter = QPainter(self)
+		painter.drawPixmap(0, 0, self.pix.width(),self.pix.height(),self.pix)
+    
+	# 鼠标双击事件
+	def mouseDoubleClickEvent(self, event):
+		if event.button() == 1:
+			self.i += 1
+			self.mypix()
+
+
+	def gequ(self):
+		yin.start()
+	def timeChange(self):
+		self.i += 1
+		self.mypix()
+
+if __name__ == '__main__':
+	app = QApplication(sys.argv)
+	form = ShapeWidget()
+
+	form.show()
+	sys.exit(app.exec_())
+'''class yinyue(QThread):
+    def __int__(self):
+        pass
+    def run(self):
+        pygame.mixer.init()
+        track = pygame.mixer.music.load("dsa.mp3")
+        pygame.mixer.music.play()
+timer = QTimer()
+yin=yinyue()
+class ceshi():
+    num=0
+    app = QtWidgets.QApplication(sys.argv)
+    w = QtWidgets.QWidget()
+    id = 'dsa.mp3' + '2.jpg'
+    png = QtGui.QPixmap(id)
+    def gequ(self):
+       yin.start()
+    def window(self,n):
+        self.gequ()
+        self.w.show()
+        self.app.exit(self.app.exec_())
+a=ceshi()
+a.window(1)'''
